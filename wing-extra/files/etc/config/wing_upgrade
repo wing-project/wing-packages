@@ -1,0 +1,4 @@
+config wing wing_upgrade
+	option repo		"http://www.wing-project.org/kamikaze"
+	option release		"nightly"
+

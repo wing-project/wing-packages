@@ -1,0 +1,80 @@
+#!/bin/sh 
+
+# Copyright (c) 2006, Matteo Gerola, Roberto Riggio
+#
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without 
+# modification, are permitted provided that the following conditions    
+# are met:
+# 
+#   - Redistributions of source code must retain the above copyright 
+#     notice, this list of conditions and the following disclaimer.
+#   - Redistributions in binary form must reproduce the above copyright 
+#     notice, this list of conditions and the following disclaimer in 
+#     the documentation and/or other materials provided with the 
+#     distribution.
+#   - Neither the name of the CREATE-NET nor the names of its 
+#     contributors may be used to endorse or promote products derived 
+#     from this software without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+. /lib/wing/wing-common-extra.sh
+
+nocfg=0
+
+while getopts "nh" OPTVAL
+do
+	case $OPTVAL in
+	n) nocfg=1
+	  ;;
+	h) echo "Usage: $0 -n -h" && exit 1
+	  ;;
+	esac
+done
+
+if [ ! -f /etc/version ]; then
+	echo "Unable to find version tag"
+	exit 1
+fi
+
+config_load wing_upgrade
+config_get repo wing_upgrade repo
+config_get release wing_upgrade release
+
+if firmware_available $repo $release "image"; then
+	echo "New firmware available!"
+	bin=$(basename $image)
+	dl $repo $image "/tmp/$bin"
+	if cfg_restore "path"; then
+		echo "Auto-configuration archive available at $path"
+	else
+		echo "Auto-configuration archive not available. Saving current configuration."
+		if ! cfg_backup "path"; then
+			echo "Unable to save current configuration. Exiting."
+			exit 1
+		fi
+		echo "Auto-configuration archive created at $path"
+	fi
+	echo "Running sysupgrade"
+	[ $nocfg -eq 1 ] && {
+		echo "Ignoring configuration file"
+		/sbin/sysupgrade -n "/tmp/$bin" 
+	} || {
+		/sbin/sysupgrade -f "$path" "/tmp/$bin" 
+	}
+fi
+
+echo "No new firmware available"
+

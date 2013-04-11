@@ -1,0 +1,182 @@
+/* Basic tags */
+
+body {
+	margin: 0px;
+	background-color: white;
+	font-family: sans-serif;
+	color: black;
+	font-size: 10pt;
+}
+
+img {
+	border: 0px
+}
+
+.heading {
+	font-weight: bold;
+	font-size: 120%;
+}
+
+.footnote {
+	font-weight: normal;
+	font-style: italic;
+	font-size: 80%;
+}
+
+div.center {
+	text-align: center;
+}
+
+div#header, div#body {
+	margin: auto; 
+	width: 840px;
+}
+
+div#label {
+	margin: auto; 
+	width: 280px;
+	font-size: 8pt;
+}
+
+div#content {
+	clear: both;
+	padding: 1em;
+}
+
+/* Google Map */
+
+.bubble {
+	width: 120px;
+	height: 80px
+}
+
+/* Tables */
+
+table.inline {
+	background-color: #ffffff;
+	border-spacing: 0px;
+	font-size: 90%;
+	border-collapse: collapse;
+}
+
+table.inline input, table.inline select {
+        font-size: 90%;
+        border: black 1px solid; 
+}
+
+table.inline option {
+        font-size: 90%;
+}
+
+table.inline th {
+	padding: 3px;
+	border-bottom: 2px solid #000000;
+	border: 1px solid #8cacbb;
+	background-color: #dee7ec;
+}
+
+table.inline td {
+	padding: 3px;
+	border: 1px solid #8cacbb;
+}
+
+/* Anchors */
+
+a {
+	color: #0000ff;
+}
+
+a:visited {
+	color: #551a8b;
+}
+
+a:active {
+	color: #ff0000;
+}
+
+/* code */
+
+#code {
+	border: 1px solid #000;
+	color: #333;
+	background-color: #eee;
+	font-size: 80%;
+}
+
+/* footer */
+
+#footer {
+	text-align: center;
+	border-top: 2px solid #CCCCCC;
+	padding-top: 1em;
+	color: #888;
+	font-size: 80%;
+	clear: both;
+}
+
+#footer a {
+	color: #3465a4;
+	border-bottom: 1px dotted #888;
+	text-decoration: none;
+}
+
+#footer a:hover {
+	border-bottom: 1px solid #888
+}
+
+/* tabs */
+
+#tabs {
+	background: url(/imgs/cinder/bar.png) 0 100% repeat-x;
+	width: 100%;
+	float: left;
+	margin: 0;
+	padding: 0;
+}
+
+#globalnav {
+	float: right;
+	list-style: none;
+	margin: 0;
+	margin-right: 3ex;
+}
+
+#globalnav li {
+	float: left;
+	margin: 0;
+	margin-left: 0.2ex;
+	font-size: 2ex;
+}
+
+#globalnav li a:hover {
+	color: #111111;
+}
+
+#globalnav li a {
+	float: left;
+	text-decoration: none;
+	color: #555555;
+	background: url(/imgs/cinder/tab_left.png) 0 0 no-repeat;
+	padding: 7px 0 7px 7px;
+	border-bottom: 2px solid #CCCCCC;
+}
+
+#globalnav li span {
+	background: url(/imgs/cinder/tab_right.png) 100% 0 no-repeat;
+	padding: 7px 28px 7px 19px;
+}
+
+#globalnav li.selected a {
+	color: #3566A5;
+	background: url(/imgs/cinder/tab_left.png) 0 -57px no-repeat;
+	border-bottom: none;
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+
+#globalnav li.selected a span {
+	background: url(/imgs/cinder/tab_right.png) 100% -57px no-repeat;
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+

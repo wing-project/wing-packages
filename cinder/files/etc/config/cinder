@@ -1,0 +1,3 @@
+config cinder core 
+	option theme "classic"
+	option prefix "cinder"

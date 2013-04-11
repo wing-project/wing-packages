@@ -1,0 +1,11 @@
+config wingdog status
+	option period		"300"
+
+config wingdog thresholds
+	option low_mem		"16384"
+
+config wingdog ticks
+	option low_mem		"6"
+	option no_click		"2"
+	option no_gateway	"6"
+

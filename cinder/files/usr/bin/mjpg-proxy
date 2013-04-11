@@ -1,0 +1,42 @@
+#!/bin/sh
+
+while getopts "h:s:a:d:p:i:g:v:" OPTVAL
+do
+	case $OPTVAL in
+	h) address="$OPTARG"
+	  ;;
+	s) port="$OPTARG"
+	  ;;
+	a) action="$OPTARG"
+	  ;;
+	d) dest="$OPTARG"
+	  ;;
+	p) plugin="$OPTARG"
+	  ;;
+	i) id="$OPTARG"
+	  ;;
+	g) group="$OPTARG"
+	  ;;
+	v) value="$OPTARG"
+	  ;;
+	*) echo "$0 -hapcv"
+	   echo ""
+	   echo "Options:"
+           echo " -h <address>"
+           echo " -s <port>"
+           echo " -a <action>"
+           echo " -d <dest>"
+           echo " -p <plugin>"
+           echo " -i <id>"
+           echo " -g <group>"
+           echo " -v <value>"
+	   echo ""
+           exit 1;
+	  ;;
+	esac
+done
+
+printf "GET /?action=command&dest=${dest}&plugin=${plugin}&id=${id}&group=${group}&value=${value}\n\n" | nc $address $port
+printf "GET /?action=command&dest=${dest}&plugin=${plugin}&id=${id}&group=${group}&value=${value}\n\n" >/tmp/PUPPA
+return $?
+

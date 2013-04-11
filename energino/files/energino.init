@@ -1,0 +1,40 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2011 OpenWrt.org
+START=99
+STOP=40
+
+SSD=start-stop-daemon
+NAME=pachubino
+PIDF=/var/run/$NAME.pid
+PROG=/usr/bin/$NAME
+LOG=/var/log/$NAME.log
+
+start() {
+        logger -t "$NAME" "Starting..."
+        [ -f $PIDF ] && {
+                logger -t "$NAME" "Process already running"
+        } || {
+                # allow the routing tables to settle
+                sleep 30
+                # generating uuid
+                config_load network
+                config_get IPADDR mesh ipaddr
+                # start daemon
+                $SSD -S -b -m -q -p $PIDF -x $PROG -- -l $LOG -u $IPADDR && {
+                        logger -t "$NAME" "Process started (uuid $IPADDR)"
+                } || {
+                        logger -t "$NAME" "Unable to start process"
+                }
+        }
+}
+
+stop() {
+        logger -t "$NAME" "Stopping..."
+        $SSD -K -q -p $PIDF && {
+                logger -t "$NAME" "Process stopped"
+                rm $PIDF
+        } || {
+                logger -t "$NAME" "Unable to stop process"
+        }
+}
+

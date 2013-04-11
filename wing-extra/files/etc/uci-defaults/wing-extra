@@ -1,0 +1,23 @@
+#!/bin/sh 
+
+# use opendns 
+uci set dhcp.@dnsmasq[0].resolvfile="/etc/resolv.conf.opendns"
+
+# open wan ssh port
+uci delete firewall.ssh
+uci set firewall.ssh=rule
+uci set firewall.ssh.src=wan
+uci set firewall.ssh.target=ACCEPT
+uci set firewall.ssh.proto=tcp
+uci set firewall.ssh.dest_port=22
+
+# open wan http port
+uci delete firewall.http
+uci set firewall.http=rule
+uci set firewall.http.src=wan
+uci set firewall.http.target=ACCEPT
+uci set firewall.http.proto=tcp
+uci set firewall.http.dest_port=80
+
+uci commit
+

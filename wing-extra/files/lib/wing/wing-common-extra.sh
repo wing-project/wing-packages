@@ -1,0 +1,228 @@
+#!/bin/sh 
+
+# Copyright (c) 2006, Roberto Riggio
+#
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without 
+# modification, are permitted provided that the following conditions    
+# are met:
+# 
+#   - Redistributions of source code must retain the above copyright 
+#     notice, this list of conditions and the following disclaimer.
+#   - Redistributions in binary form must reproduce the above copyright 
+#     notice, this list of conditions and the following disclaimer in 
+#     the documentation and/or other materials provided with the 
+#     distribution.
+#   - Neither the name of the CREATE-NET nor the names of its 
+#     contributors may be used to endorse or promote products derived 
+#     from this software without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+. /lib/functions.sh
+
+RELEASE_STABLE="stable"
+RELEASE_TESTING="testing"
+RELEASE_NIGHTLY="nightly"
+
+#
+# Firmware upgrade functions
+#
+
+dl() {
+	local url=$1
+	local path=$2
+	local dest=$3
+	local filename=$(basename $path)
+	[ -f $filename ] && rm $filename
+	echo "Downloading: $url/$path"
+	if ! wget $url/$path -O $dest; then
+		echo "Unable to download resource: $path"
+		return 1
+	fi
+}
+
+firmware_valid_platform() { 
+	local ctag=$(cat /etc/version | awk '{print $1}')
+	local csubtarget=$(cat /etc/version | awk '{print $2}')
+	[ "$1" = "$ctag" ] && [ "$2" = "$csubtarget" ] && return 0 
+	return 1
+}
+
+firmware_valid_version() {
+	local current=$(cat /etc/version | awk '{print $3}')
+	if [ "$1" = "$RELEASE_NIGHTLY" -a "$current" = "$RELEASE_NIGHTLY" ]; then
+		return 0;
+	fi
+	local y=$(echo $1 | cut -d "." -f2)
+	local res=$(($y%2))
+	if [ "$1" = "$RELEASE_STABLE" -a "$current" = "$RELEASE_STABLE" -a $res -eq 0 ]; then
+		return 0;
+	fi
+	if [ "$1" = "$RELEASE_TESTING" -a "$current" = "$RELEASE_TESTING" -a $res -eq 1 ]; then
+		return 0;
+	fi
+	return 1
+}
+
+firmware_newer() {
+	[ "$1" = "$RELEASE_NIGHTLY" ] && return 0
+	x_a=$(echo $1 | cut -d "." -f1)
+	y_a=$(echo $1 | cut -d "." -f2)
+	z_a=$(echo $1 | cut -d "." -f3)
+	x_b=$(echo $2 | cut -d "." -f1)
+	y_b=$(echo $2 | cut -d "." -f2)
+	z_b=$(echo $2 | cut -d "." -f3)
+	if [ $x_a -gt $x_b ]; then
+		return 0
+	elif [ $x_a -lt $x_b ]; then
+		return 1
+	else
+		if [ $y_a -gt $y_b ]; then
+			return 0
+		elif [ $y_a -lt $y_b ]; then
+			return 1
+		else
+			if [ $z_a -gt $z_b ]; then
+				return 0
+			elif [ $z_a -lt $z_b ]; then
+				return 1
+			else
+				return 1
+			fi
+		fi
+	fi
+	return 1
+}
+
+firmware_available() {
+	local repo=$1
+	local release=$2
+	local current=$(cat /etc/version | awk '{print $3}')
+	dl $repo "repo" "/tmp/repo"
+	local rows=$(wc -l "/tmp/repo" | awk '{print $1}')
+	for row in $(seq 1 $rows); do
+		local line=`head -$row "/tmp/repo" | tail -1`
+		local tag=$(echo $line | awk '{print $1}')
+		local subtarget=$(echo $line | awk '{print $2}')
+		local ver=$(echo $line | awk '{print $3}')
+		local img=$(echo $line | awk '{print $4}')
+		if ! firmware_valid_platform $tag $subtarget; then 
+			continue
+		fi
+		if ! firmware_valid_version $ver; then 
+			continue
+		fi
+		if firmware_newer $ver $current; then
+			case "$3" in
+				"") eval "echo \"\$img\"";;
+				*) eval "export ${NO_EXPORT:+-n} -- \"$3=\$img\""; 
+			esac
+			return 0
+		fi
+	done
+	return 1
+}
+
+cfg_backup() {
+	local tag version
+	local tmp="sysupgrade.tgz"
+	find /etc/config /etc/passwd > "/tmp/sysupgrade.conffiles" || return 1
+	[ -f "/tmp/$tmp" ] && rm "/tmp/$tmp"
+	tar czf "/tmp/$tmp" -T "/tmp/sysupgrade.conffiles"
+	case "$1" in
+		"") eval "echo \"/tmp/\$tmp\"";;
+		*) eval "export ${NO_EXPORT:+-n} -- \"$1=/tmp/\$tmp\""; 
+	esac
+	return 0
+}
+
+cfg_restore() {
+	local repo ifname hwaddr conf
+	config_load wing_upgrade
+	config_get repo wing_upgrade repo
+	config_load network
+	config_get ifname wan ifname
+	dev_hwaddr $ifname hwaddr
+	[ "$hwaddr" = "" ] && {
+		echo "Unable to fetch device mac"
+		return 1
+	}
+	dl $repo "autoconf" "/tmp/autoconf"
+	local lines=$(cat "/tmp/autoconf" | grep "^$hwaddr" | wc -l)
+	[ "$lines" != "1" ] && {
+		echo "Invalid number of entries: $lines"
+		return 1
+	}
+	local conf=$(cat "/tmp/autoconf" | grep "^$hwaddr" | awk '{print $2}')
+	[ "$conf" = "" ] && {
+		echo "Auto-configuration archive not available"
+		return 1
+	}
+	local tmp=$(basename $conf)
+	dl $repo $conf "/tmp/$tmp"
+	case "$1" in
+		"") eval "echo \"/tmp/\$tmp\"";;
+		*) eval "export ${NO_EXPORT:+-n} -- \"$1=/tmp/\$tmp\""; 
+	esac
+	return 0
+}
+
+#
+# Misc functions
+#
+
+dev_exists() {
+	[ "$1" = "" ] && return 1
+	if ifconfig $1 > /dev/null 2>&1; then 
+		return 0
+	fi
+	return 1
+}
+
+dev_hwaddr() {
+	if ! dev_exists $1; then
+		return 1
+	fi
+	local addr=$(ifconfig $1 | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}')
+	case "$2" in
+		"") eval "echo \"\$addr\"";;
+		*) eval "export ${NO_EXPORT:+-n} -- \"$2=\$addr\"";;
+	esac
+}
+
+router_has_connectivity() {
+	local gw=$(route -n 2>/dev/null | grep '^0.0.0.0' | awk '{print $2}')
+	[ "$gw" = "" -o "$gw" = "0.0.0.0" ] && {
+		local best=$(read_handler wr/gw.gateway_stats | awk '{print $11}' | sort -n | head -1)
+		local gw=$(read_handler wr/gw.gateway_stats | grep "$best$" | head -1 | awk '{print $3}')
+	}
+	[ "$gw" = "" -o "$gw" = "0.0.0.0" ] && return 1
+	if ping -c 3 $gw > /dev/null 2>&1; then
+		return 0
+	fi
+	return 1
+}
+
+rand() {
+	local bytes=4
+	local hex=$(dd if=/dev/urandom bs=1 count=$bytes 2>/dev/null | hexdump | sed -n '$q;p' | cut -d ' ' -f2- | sed 's/ //g')
+	local n=$((0x$hex))
+	local result=$(($n%$1+1))
+	case "$2" in
+		"") eval "echo \"\$result\"";;
+		*) eval "export ${NO_EXPORT:+-n} -- \"$2=\$result\""; 
+	esac
+}
+
