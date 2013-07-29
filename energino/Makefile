@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=energino
 PKG_VERSION:=20130729
 PKG_RELEASE:=1
-PKG_REV:=7c16bcbccdf577b1d3890a9472d0502d0a58e30b
+PKG_REV:=44bcba03f9cd3f354b119ac2cf8ee67e7ec92f51
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=git://github.com/rriggio/energino.git
