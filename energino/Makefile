@@ -42,11 +42,11 @@ define Package/energino/install
 	$(INSTALL_DIR) $(1)/etc/
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_DIR) $(1)/usr/bin/
-	$(CP) $(PKG_INSTALL_DIR)/usr/etc/pachubino.conf $(1)/etc/
+	$(CP) $(PKG_INSTALL_DIR)/usr/etc/xively.conf $(1)/etc/
 	$(CP) $(PKG_INSTALL_DIR)$(PYTHON_PKG_DIR)/* $(1)$(PYTHON_PKG_DIR)/
-	$(INSTALL_BIN) ./files/pachubino.init $(1)/etc/init.d/pachubino
-	$(LN) $(PYTHON_PKG_DIR)/pachubino.py $(1)/usr/bin/pachubino
-	$(LN) $(PYTHON_PKG_DIR)/energino.py $(1)/usr/bin/energino
+	$(INSTALL_BIN) ./files/xively.init $(1)/etc/init.d/xively
+	$(LN) $(PYTHON_PKG_DIR)/energino/xively_client.py $(1)/usr/bin/xively_client
+	$(LN) $(PYTHON_PKG_DIR)/energino/energino.py $(1)/usr/bin/energino
 endef
 
 $(eval $(call BuildPackage,energino))

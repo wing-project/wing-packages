@@ -4,7 +4,7 @@ START=99
 STOP=40
 
 SSD=start-stop-daemon
-NAME=pachubino
+NAME=xively_client
 PIDF=/var/run/$NAME.pid
 PROG=/usr/bin/$NAME
 LOG=/var/log/$NAME.log
