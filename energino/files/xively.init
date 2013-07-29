@@ -8,6 +8,7 @@ NAME=xively_client
 PIDF=/var/run/$NAME.pid
 PROG=/usr/bin/$NAME
 LOG=/var/log/$NAME.log
+OPTS=""
 
 start() {
         logger -t "$NAME" "Starting..."
@@ -18,14 +19,17 @@ start() {
                 sleep 30
                 # generating uuid
                 config_load network
-                config_get IPADDR mesh ipaddr
-                # start daemon
-                $SSD -S -b -m -q -p $PIDF -x $PROG -- -l $LOG -u $IPADDR && {
-                        logger -t "$NAME" "Process started (uuid $IPADDR)"
-                } || {
-                        logger -t "$NAME" "Unable to start process"
+                config_get ipadrr wan ipaddr
+                [ "x$ipaddr" == "x" ] || {
+                        OPTS="-u $ipaddr"
                 }
-        }
+                # start daemon
+                $SSD -S -b -m -q -p $PIDF -x $PROG -- -l $LOG $OPTS && {
+                        logger -t "$NAME" "Process started"             
+                } || {                                     
+                        logger -t "$NAME" "Unable to start process"
+                }                                                  
+        }        
 }
 
 stop() {
