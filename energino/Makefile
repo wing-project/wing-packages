@@ -43,7 +43,7 @@ define Package/energino/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_DIR) $(1)/usr/bin/
 	$(CP) $(PKG_INSTALL_DIR)/usr/etc/pachubino.conf $(1)/etc/
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)$(PYTHON_PKG_DIR)/* $(1)$(PYTHON_PKG_DIR)
+	$(CP) $(PKG_INSTALL_DIR)$(PYTHON_PKG_DIR)/* $(1)$(PYTHON_PKG_DIR)/
 	$(INSTALL_BIN) ./files/pachubino.init $(1)/etc/init.d/pachubino
 	$(LN) $(PYTHON_PKG_DIR)/pachubino.py $(1)/usr/bin/pachubino
 	$(LN) $(PYTHON_PKG_DIR)/energino.py $(1)/usr/bin/energino
