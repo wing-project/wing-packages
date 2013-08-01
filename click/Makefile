@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=click
 PKG_VERSION:=20130801
 PKG_RELEASE:=1
-PKG_REV:=67715e070568f2a9e28c3bce10393a1e55940c7d
+PKG_REV:=edc95f628dda65861088021da8a882dcc49256ab
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=git://github.com/rriggio/click.git
@@ -43,16 +43,19 @@ CONFIGURE_ARGS += \
 	--disable-linuxmodule \
 	--disable-dynamic-linking \
 
+define Build/Compile
+	$(call Build/Install/Default, install)
+endef
+
 define Package/click/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_DIR) $(1)/usr/share/click
 	$(CP) $(PKG_BUILD_DIR)/conf/wing/write_handler $(1)/usr/bin/
 	$(CP) $(PKG_BUILD_DIR)/conf/wing/read_handler $(1)/usr/bin/
-	$(CP) $(PKG_INSTALL_DIR)/usr/bin/$(PKG_NAME)click $(1)/usr/bin/click
+	$(CP) $(PKG_INSTALL_DIR)/usr/bin/click $(1)/usr/bin/click
 	$(CP) $(PKG_INSTALL_DIR)/usr/bin/click-align $(1)/usr/bin/click-align
 	$(CP) $(PKG_INSTALL_DIR)/usr/share/click/elementmap.xml $(1)/usr/share/click/elementmap.xml
 endef
 
-$(eval $(call HostBuild))
 $(eval $(call BuildPackage,click))
 
