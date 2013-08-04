@@ -25,7 +25,7 @@ define Package/joule
   TITLE:=Joule
   SECTION:=admin
   CATEGORY:=Administration
-  DEPENDS:=+python +pyserial +python-json +kmod-usb-acm +click
+  DEPENDS:=+python +pyserial +python-json +numpy +kmod-usb-acm +click
   URL:=http://gforge.create-net.org/
 endef
 
