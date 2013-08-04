@@ -8,9 +8,9 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=joule
-PKG_VERSION:=20130801
+PKG_VERSION:=20130804
 PKG_RELEASE:=1
-PKG_REV:=4201fefc81af61b99a91b8369abf0ee401b4f7e5
+PKG_REV:=f0c249e99adad0236b94375797fc88f7bf8516b8
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=git://github.com/rriggio/joule.git
@@ -25,7 +25,7 @@ define Package/joule
   TITLE:=Joule
   SECTION:=admin
   CATEGORY:=Administration
-  DEPENDS:=+python +pyserial +kmod-usb-acm +click
+  DEPENDS:=+python +pyserial +python-json +kmod-usb-acm +click
   URL:=http://gforge.create-net.org/
 endef
 

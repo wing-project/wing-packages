@@ -8,9 +8,9 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=energino
-PKG_VERSION:=20130729
+PKG_VERSION:=20130804
 PKG_RELEASE:=1
-PKG_REV:=44bcba03f9cd3f354b119ac2cf8ee67e7ec92f51
+PKG_REV:=709c0f877b61260abc2d1953ea8c7a3fa97415de
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=git://github.com/rriggio/energino.git
