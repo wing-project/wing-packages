@@ -8,9 +8,9 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=joule
-PKG_VERSION:=20130804
+PKG_VERSION:=20130807
 PKG_RELEASE:=1
-PKG_REV:=f0c249e99adad0236b94375797fc88f7bf8516b8
+PKG_REV:=86da40a7eab8345fe1e9eb7f748ff5012ea25c8c
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=git://github.com/rriggio/joule.git
