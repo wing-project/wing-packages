@@ -45,9 +45,9 @@ define Package/joule/install
 	$(CP) $(PKG_INSTALL_DIR)/usr/etc/xively.conf $(1)/etc/joule/
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)$(PYTHON_PKG_DIR)/joule/* $(1)$(PYTHON_PKG_DIR)/joule/
 	$(INSTALL_BIN) ./files/joule.init $(1)/etc/init.d/joule
+	$(INSTALL_BIN) ./files/xively.init $(1)/etc/init.d/xively
 	$(LN) $(PYTHON_PKG_DIR)/joule/xively_client.py $(1)/usr/bin/xively_client
 	$(LN) $(PYTHON_PKG_DIR)/joule/virtualmeter.py $(1)/usr/bin/virtualmeter
-	$(LN) $(PYTHON_PKG_DIR)/joule/energino.py $(1)/usr/bin/energino
 endef
 
 $(eval $(call BuildPackage,joule))
