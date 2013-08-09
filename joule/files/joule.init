@@ -16,12 +16,12 @@ CLICK="FromDevice(moni0, PROMISC false, OUTBOUND true, SNIFFER false)
  -> tx :: FilterTX()
  -> WifiDupeFilter() 
  -> AggregateLength() 
- -> ac_rx::AggregateCounter()
+ -> RX::AggregateCounter()
  -> Discard(); 
 
 tx[1]
  -> AggregateLength() 
- -> ac_tx::AggregateCounter()
+ -> TX::AggregateCounter()
  -> Discard(); 
 
 ControlSocket(TCP, 7777);" 
