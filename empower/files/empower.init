@@ -110,21 +110,25 @@ start() {
         # set monitor interface MTU
 	ifconfig $INTERFACE mtu 2300
 
-        # bring interface ip                                          
+        # set monitor channel
+	iw dev $INTERFACE set channel $CHANNEL
+
+	# bring monitor interface up
+        ifconfig $INTERFACE up
+
+        # bring virtual ap interface ip                                          
         ifconfig $VIRTUAL_IFNAME up   
 
-	# add virtual ap to bridge
+	# add virtual ap interface to bridge
 	brctl addif $BRIDGE $VIRTUAL_IFNAME
 
 }
 
 stop() {
-
 	logger -t "$NAME" "Stopping..."
 	[ -f $PIDF ] && {
 		kill -9 $(cat $PIDF)
 		rm $PIDF
 	}
-
 }
 
