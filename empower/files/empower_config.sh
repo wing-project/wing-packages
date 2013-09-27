@@ -74,7 +74,7 @@ done
 
 echo """rates :: AvailableRates(DEFAULT 12 24 36 48 108);
 
-ControlSocket(\"TCP\", 6777);
+ControlSocket(\"TCP\", 7777);
 
 sched :: PrioSched()
   -> RadiotapEncap()
@@ -85,7 +85,7 @@ mngt :: Queue(50)
   -> [0] sched;
 
 FromHost($VIRTUAL_IFNAME)       
-  -> epsb :: EmpowerPowerSaveBuffer(EL el, CAPACITY 50)
+  -> epsb :: EmpowerPowerSaveBuffer(EL el, CAPACITY 50, ACTIVE true)
   -> EmpowerWifiEncap(EL el, DEBUG $DEBUG)
   -> Queue(50)
   -> SetTXRate(12)
@@ -109,6 +109,7 @@ FromDevice($IFNAME, PROMISC false, OUTBOUND true, SNIFFER false)
     -> ToHost($VIRTUAL_IFNAME); 
 
   wifi_cl [1] 
+    -> EmpowerPowerSaveFilter(EPSB epsb, EL el)
     -> mgt_cl :: Classifier(0/40%f0,  // probe req
                             0/b0%f0,  // auth req
                             0/00%f0); // assoc req
