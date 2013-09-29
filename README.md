@@ -13,7 +13,7 @@ In order to add these packages as an additional feed in OpenWRT run:
 
 > cd $TOPDIR
 > 
-> echo 'src-git openwrt-packages git://github.com/rriggio/openwrt-packages.git' >> feeds.conf.default
+> echo 'src-git openwrtpackages git://github.com/rriggio/openwrt-packages.git' >> feeds.conf.default
 >
 > ./scripts/feeds update openwrt-packages
 
