@@ -85,8 +85,8 @@ mngt :: Queue(50)
   -> [0] sched;
 
 FromHost($VIRTUAL_IFNAME)       
-  -> epsb :: EmpowerPowerSaveBuffer(EL el, CAPACITY 50, ACTIVE true)
   -> EmpowerWifiEncap(EL el, DEBUG $DEBUG)
+  -> epsb :: EmpowerPowerSaveBuffer(EL el, CAPACITY 50, ACTIVE true)
   -> Queue(50)
   -> SetTXRate(12)
   -> [1] sched;
