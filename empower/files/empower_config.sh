@@ -85,8 +85,8 @@ mngt :: Queue(50)
   -> [0] sched;
 
 FromHost($VIRTUAL_IFNAME)       
-  -> EmpowerWifiEncap(EL el, DEBUG $DEBUG)
   -> epsb :: EmpowerPowerSaveBuffer(EL el, CAPACITY 50, ACTIVE true)
+  -> EmpowerWifiEncap(EL el, DEBUG $DEBUG)
   -> Queue(50)
   -> SetTXRate(12)
   -> [1] sched;
@@ -100,7 +100,7 @@ FromDevice($IFNAME, PROMISC false, OUTBOUND true, SNIFFER false)
                            0/00%0c);        // mgt
 
   ctrl :: Socket(TCP, $MASTER_IP, $MASTER_PORT, CLIENT true, VERBOSE true)
-    -> el :: EmpowerLVAPManager(HWADDR $HWADDR, EBS ebs, PERIOD 5000, DEBUGFS $DEBUGFS, DEBUG $DEBUG)
+    -> el :: EmpowerLVAPManager(HWADDR $HWADDR, EBS ebs, EAUTHR eauthr, EASSOR eassor, PERIOD 5000, DEBUGFS $DEBUGFS, DEBUG $DEBUG)
     -> ctrl;
 
   wifi_cl [0] 
@@ -119,11 +119,11 @@ FromDevice($IFNAME, PROMISC false, OUTBOUND true, SNIFFER false)
     -> mngt;
 
   mgt_cl [1] 
-    -> EmpowerOpenAuthResponder(RT rates, EL el, DEBUG $DEBUG) 
+    -> eauthr :: EmpowerOpenAuthResponder(RT rates, EL el, DEBUG $DEBUG) 
     -> mngt;
 
   mgt_cl [2] 
-    -> EmpowerAssociationResponder(RT rates, EL el, DEBUG $DEBUG) 
+    -> eassor :: EmpowerAssociationResponder(RT rates, EL el, DEBUG $DEBUG) 
     -> mngt;
 
 """
