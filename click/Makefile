@@ -8,9 +8,9 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=click
-PKG_VERSION:=20130820
+PKG_VERSION:=20131011
 PKG_RELEASE:=1
-PKG_REV:=0b30abef72f7efd14eb4ed672600a0085f19bd40
+PKG_REV:=89a67b2eec614c3d8f11fcfd9dc2aa89011da363
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=git://github.com/rriggio/click.git
