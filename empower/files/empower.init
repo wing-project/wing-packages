@@ -122,6 +122,12 @@ start() {
 	# add virtual ap interface to bridge
 	brctl addif $BRIDGE $VIRTUAL_IFNAME
 
+        # get switch port number
+        PORT=$(ovs-dpctl show $BRIDGE | grep $VIRTUAL_IFNAME | sed -n "s/^.*port \([0-9]*\): $VIRTUAL_IFNAME/\1/p")
+                                                                    
+        # set port number                                           
+        write_handler el.port $PORT   
+
 }
 
 stop() {
