@@ -81,14 +81,13 @@ sched :: PrioSched()
   -> ToDevice ($IFNAME);
 
 mngt :: Queue(50)
-  -> SetTXRate(12)
   -> [0] sched;
 
 FromHost($VIRTUAL_IFNAME)       
   -> EmpowerWifiEncap(EL el, DEBUG $DEBUG)
-  -> epsb :: EmpowerPowerSaveBuffer(EL el, CAPACITY 50, ACTIVE true)
-  -> Queue(50)
-  -> SetTXRate(12)
+  -> WifiSeq()
+  -> epsb :: EmpowerPowerSaveBuffer(EL el, CAPACITY 50, DEBUG $DEBUG)
+  -> SetTXRate(RATE 12, TRIES 12)
   -> [1] sched;
 
 FromDevice($IFNAME, PROMISC false, OUTBOUND true, SNIFFER false)
@@ -100,31 +99,47 @@ FromDevice($IFNAME, PROMISC false, OUTBOUND true, SNIFFER false)
                            0/00%0c);        // mgt
 
   ctrl :: Socket(TCP, $MASTER_IP, $MASTER_PORT, CLIENT true, VERBOSE true)
-    -> el :: EmpowerLVAPManager(HWADDR $HWADDR, EBS ebs, EAUTHR eauthr, EASSOR eassor, PERIOD 5000, DEBUGFS $DEBUGFS, DEBUG $DEBUG)
+    -> el :: EmpowerLVAPManager(HWADDR $HWADDR, 
+                                EBS ebs, 
+                                EAUTHR eauthr, 
+                                EASSOR eassor, 
+                                PERIOD 5000, 
+                                DEBUGFS $DEBUGFS, 
+                                EPSB epsb, 
+                                DEBUG $DEBUG)
     -> ctrl;
 
   wifi_cl [0] 
-    -> EmpowerPowerSaveFilter(EPSB epsb, EL el)
+    -> EmpowerPowerSaveFilter(EPSB epsb, EL el, DEBUG $DEBUG)
     -> EmpowerWifiDecap(EL el, DEBUG $DEBUG) 
     -> ToHost($VIRTUAL_IFNAME); 
 
   wifi_cl [1] 
-    -> EmpowerPowerSaveFilter(EPSB epsb, EL el)
+    -> EmpowerPowerSaveFilter(EPSB epsb, EL el, DEBUG $DEBUG)
     -> mgt_cl :: Classifier(0/40%f0,  // probe req
                             0/b0%f0,  // auth req
-                            0/00%f0); // assoc req
+                            0/00%f0,  // assoc req
+                            0/20%f0); // reassoc req
 
   mgt_cl [0] 
-    -> ebs :: EmpowerBeaconSource(RT rates, EL el, CHANNEL $CHANNEL, PERIOD 100, DEBUG $DEBUG) 
+    -> ebs :: EmpowerBeaconSource(RT rates, EL el, CHANNEL $CHANNEL, 
+                                  PERIOD 100, DEBUG $DEBUG) 
+    -> WifiSeq()
+    -> SetTXRate(RATE 12, TRIES 1)
     -> mngt;
 
   mgt_cl [1] 
     -> eauthr :: EmpowerOpenAuthResponder(RT rates, EL el, DEBUG $DEBUG) 
+    -> SetTXRate(RATE 12, TRIES 12)
     -> mngt;
 
   mgt_cl [2] 
     -> eassor :: EmpowerAssociationResponder(RT rates, EL el, DEBUG $DEBUG) 
+    -> SetTXRate(RATE 12, TRIES 12)
     -> mngt;
+
+  mgt_cl [3] 
+    -> eassor;
 
 """
 
