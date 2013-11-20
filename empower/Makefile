@@ -8,15 +8,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=empower
-#PKG_VERSION:=20131011
+PKG_VERSION:=20131120
 PKG_RELEASE:=1
-#PKG_REV:=89a67b2eec614c3d8f11fcfd9dc2aa89011da363
+PKG_REV:=de6a1b50446cd4f01fc6a2dd3ea66e4def1b4bbb
 
-#PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
-#PKG_SOURCE_URL:=git://github.com/rriggio/click.git
-#PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-#PKG_SOURCE_VERSION:=$(PKG_REV)
-#PKG_SOURCE_PROTO:=git
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
+PKG_SOURCE_URL:=git://github.com/rriggio/click.git
+PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE_VERSION:=$(PKG_REV)
+PKG_SOURCE_PROTO:=git
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -31,11 +31,6 @@ endef
 
 define Package/empower/Description
 	The EmPOWER Agent
-endef
-
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-	$(CP) /home/rriggio/src/click/* $(PKG_BUILD_DIR)/
 endef
 
 EXTRA_CFLAGS=-MD
