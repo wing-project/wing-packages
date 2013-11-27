@@ -129,7 +129,17 @@ start() {
         if [ "x$PORT" != "x" ]; then
 		write_handler el.port $PORT   
         else                                                        
-                logger -t "$NAME" "Unable to fetch port, $VIRTUAL_IFNAME interface is inactive"
+		logger -t "$NAME" "Unable to fetch port, $VIRTUAL_IFNAME interface is inactive"
+        fi  
+
+        # get the swithc dpid                                                     
+        DPID=$(ovs-ofctl show br-wan | grep dpid | sed -n 's/.*dpid:\(.*\)/\1/p' | sed -e "s/.\{2\}/&-/g" | sed 's:^\(.*\).$:\1:')
+                                                                         
+        # set the dpid                                               
+        if [ "x$DPID" != "x" ]; then                               
+		write_handler el.dpid $DPID
+        else                                                             
+		logger -t "$NAME" "Unable to fetch dpid, $VIRTUAL_IFNAME interface is inactive"
         fi  
 
 }
