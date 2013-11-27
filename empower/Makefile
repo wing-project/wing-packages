@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=empower
 PKG_VERSION:=20131127
 PKG_RELEASE:=1
-PKG_REV:=970eaa016b04a29877d4471f51ca5f2373bf3d27
+PKG_REV:=e93f8015ef43a970ada21c2f8ec8684769e8a67c
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=git://github.com/rriggio/click.git
