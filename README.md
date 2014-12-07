@@ -1,4 +1,4 @@
-openwrt-packages
+openwrt-packages-extra
 ================
 
 Some extra packages for OpenWrt. 
