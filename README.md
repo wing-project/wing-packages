@@ -1,9 +1,7 @@
 openwrt-packages
 ================
 
-Some personal packages for OpenWrt. These packages are tested with a more or 
-less up-to-date version of OpenWrt trunk. My other repository named 'openwrt'
-already includes this feed.
+Some extra packages for OpenWrt. 
 
 
 Installation
@@ -13,9 +11,9 @@ In order to add these packages as an additional feed in OpenWRT run:
 
 > cd $TOPDIR
 > 
-> echo 'src-git openwrtpackages git://github.com/rriggio/openwrt-packages.git' >> feeds.conf.default
+> echo 'src-git extra git@github.com:rriggio/openwrt-packages-extra.git' >> feeds.conf.default
 >
-> ./scripts/feeds update openwrt-packages
+> ./scripts/feeds update extra
 
 To install one package (e.g. the wing package) run:
 
